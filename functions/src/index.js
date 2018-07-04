@@ -1,14 +1,12 @@
 // See https://github.com/dialogflow/dialogflow-fulfillment-nodejs
 // for Dialogflow fulfillment library docs, samples, and to report issues
-import functions from 'firebase-functions';
+import * as functions from 'firebase-functions';
 import { WebhookClient } from 'dialogflow-fulfillment';
 import { EventEmitter } from 'events';
 import convertDateToApiFormat from './utils';
 import WeatherAnswerInfo from './WeatherAnswerInfo';
 
 process.env.DEBUG = 'dialogflow:debug'; // enables lib debugging statements
-
-convertDateToApiFormat('2014-25-6');
 
 const sendMessageEvent: EventEmitter = new EventEmitter();
 
