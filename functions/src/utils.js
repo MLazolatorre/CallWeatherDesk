@@ -7,10 +7,7 @@ function convertDateToApiFormat(dateString: string): string {
 
   const dateSpliter: string = dateObj.toISOString().split('T');
 
-  console.log('dateSpliter');
-  console.log(dateSpliter);
-
   return dateSpliter[0];
 }
 
-export default { convertDateToApiFormat };
+export default convertDateToApiFormat;

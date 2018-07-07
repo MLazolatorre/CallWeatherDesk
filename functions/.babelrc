@@ -1,3 +1,9 @@
 {
   presets: ['env', 'airbnb', 'flow'],
+  plugins: ['transform-runtime'],
+  env: {
+    test: {
+      plugins: ['istanbul'],
+    },
+  },
 }

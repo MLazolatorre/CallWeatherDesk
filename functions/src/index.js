@@ -2,50 +2,43 @@
 // for Dialogflow fulfillment library docs, samples, and to report issues
 import * as functions from 'firebase-functions';
 import { WebhookClient } from 'dialogflow-fulfillment';
-import { EventEmitter } from 'events';
 import convertDateToApiFormat from './utils';
 import WeatherAnswerInfo from './WeatherAnswerInfo';
+import { weatherApiRequest, WetherApiSchema } from './WeatherApi';
 
 process.env.DEBUG = 'dialogflow:debug'; // enables lib debugging statements
-
-const sendMessageEvent: EventEmitter = new EventEmitter();
 
 exports.dialogflowFirebaseFulfillment = functions.https.onRequest(
   (request: {}, response: {}): void => {
     const webhookClient: WebhookClient = new WebhookClient({ request, response });
-    const headers: {} = { request };
-    const body: {} = { request };
+    const { body }: {} = request;
 
-    console.log(`Dialogflow Request headers: ${JSON.stringify(headers)}`);
-    console.log(`Dialogflow Request body: ${JSON.stringify(body)}`);
+    console.log('body');
+    console.log(body);
 
-    // Check if the user asked a specific city.
-    // if he don't, emit 'cityUnknow' event.
-    function checkAddress(weatherAnswer: WeatherAnswerInfo): void {
-      console.log('Entre dans checkAddress function');
-
-      if (!weatherAnswer.isAddressKnown()) sendMessageEvent.emit('cityUnknow');
-    }
-
-    function weatherResponse(agent: {}) {
-      // set the listeners
-      sendMessageEvent.on(
-        'cityUnknow',
-        agent.add('Dans quelle ville voullez-vous que je recherche cette information ?'),
-      );
-
+    async function weatherResponse(agent: {}) {
       // stock user request's infos in an objetc
       const weatherAnswer: WeatherAnswerInfo = new WeatherAnswerInfo(body);
 
-      checkAddress(weatherAnswer);
+      // Check if the user asked a specific city.
+      if (!weatherAnswer.isAddressKnown()) {
+        agent.add('Dans quelle ville voullez-vous que je recherche cette information ?');
+        return;
+      }
 
-      convertDateToApiFormat(weatherAnswer.date);
+      let reponseApi: WetherApiSchema;
+      try {
+        reponseApi = await weatherApiRequest(
+          weatherAnswer.address,
+          convertDateToApiFormat(weatherAnswer.date),
+        );
+      } catch (err) {
+        agent.add(`${err}`);
+      }
+      agent.add(`${reponseApi}`);
     }
 
     // Intent's declaration functions
-    const intentMap: Map = new Map();
-    intentMap.set('weather', weatherResponse);
-    intentMap.set('weather.temperature', weatherResponse);
-    webhookClient.handleRequest(intentMap);
+    webhookClient.handleRequest(weatherResponse);
   },
 );

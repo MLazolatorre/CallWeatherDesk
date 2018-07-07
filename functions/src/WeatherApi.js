@@ -1,62 +1,46 @@
-import rp from 'request-promise';
-import apiKey from '../WEATHER_API_KEY';
+import Rp from 'request-promise';
+import apiKey from './WEATHER_API_KEY';
+import { responseType } from '../flow-typed/callWeatherDesk';
 
-const host: string = 'api.worldweatheronline.com';
+const host: string = 'http://api.worldweatheronline.com';
 const wwoApiKey: string = apiKey;
 
-type locationType = {
-  query: string,
-  type: string,
-};
-
-type forecastType = {
-  maxtempC: string,
-  maxtempF: string,
-  mintempC: string,
-  mintempF: string,
-  date: string,
-};
-
-type responseType = {
-  data: {
-    weather: Array<forecastType>,
-    request: Array<locationType>,
-  },
-};
-
-type conditionsType = {
-  weatherDesc: Array<string>,
-};
-
 class WetherApiSchema {
-  constructor(struct: mixed) {
+  constructor(struct: responseType) {
     if (!struct) throw new Error('The structure is empty');
 
-    this.struct = struct;
+    [this.forecast] = struct.data.weather;
+    [this.location] = struct.data.request;
+    [this.conditions] = struct.data.current_condition;
+    this.currentConditions = this.conditions.weatherDesc[0].value;
+  }
+  // Create response
+  // const output: string =
+
+  strin(): string {
+    return `Current conditions in the ${this.location.type}
+    ${this.location.query} are ${this.currentConditions} with a projected high of
+    ${this.forecast.maxtempC}°C or ${this.forecast.maxtempF}°F and a low of
+    ${this.forecast.mintempC}°C or ${this.forecast.mintempF}°F on
+    ${this.forecast.date}.`;
   }
 }
 
-export default async function weatherApiRequest(city: string, date: string) {
-  const path: string = `${'/premium/v1/weather.ashx?format=json&num_of_days=1'
-    + '&q='}${encodeURIComponent(city)}&key=${wwoApiKey}&date=${date}`;
+async function weatherApiRequest(city: string, date: string): WetherApiSchema {
+  // Create the path for the HTTP request to get the weather
+  const path: string = `/premium/v1/weather.ashx?key=${wwoApiKey}&q=${city}&format=json&num_of_days=5${date}`;
+  console.log(`API Request: ${host}${path} hahaha`);
 
-  const apiRes: Promise = await rp(`${host}${path}`);
+  let reponseAPI: responseType;
+  try {
+    reponseAPI = new Rp(`${host}${path}`);
+  } catch (err: Error) {
+    console.log(err);
+    throw err;
+  }
 
-  const response: responseType = JSON.parse(apiRes);
-
-  return new WetherApiSchema(response);
-
-  const forecast: forecastType = response.data.weather[0];
-  const location: locationType = response.data.request[0];
-  const conditions: conditionsType = response.data.current_condition[0];
-  const currentConditions: string = conditions.weatherDesc[0].value;
-
-  // Create response
-  const output: string = `Current conditions in the ${location.type}
-  ${location.query} are ${currentConditions} with a projected high of
-  ${forecast.maxtempC}°C or ${forecast.maxtempF}°F and a low of
-  ${forecast.mintempC}°C or ${forecast.mintempF}°F on
-  ${forecast.date}.`;
-
-  return output;
+  console.log(reponseAPI);
+  return reponseAPI;
 }
+
+export { weatherApiRequest, WetherApiSchema };
