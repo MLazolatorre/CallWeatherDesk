@@ -23,7 +23,7 @@
 1.  Enable _Webhook_, set the value of _URL_ to the `Function URL` from the previous step, then click _Save_.
 1.  Select _Intents_ from the left navigation menu. Select the `weather` intent, scroll down to the end of the page and click _Fulfillment_, check _Use webhook_ and then click _Save_. This will allow you to have the welcome intent be a basic webhook intent to test (Do the same with all the other intent).
 1.  Run `Quel temps fera-il demain à Paris ?` for example in the Google right form.
-1.  If google answer `Une erreur est survenue lors de la récupération des infos météo.` that mean you have to [upgrade your Google Formule Firebase](https://firebase.google.com/pricing/?authuser=0) to `Flame Plan`. The `Spark Plan` doesn't allow Outbound networking so the API request is canceled.
+1.  If google answer `Une erreur est survenue lors de la récupération des infos météo.` that mean you have to [upgrade your Google Formule Firebase](https://firebase.google.com/pricing/?authuser=0) to `Flame Plan`. The `Spark Plan` doesn't allow Outbound networking (e.g Cloud Functions section, Outbound networking: Spark plan = Google services only) so the API request is canceled.
 
 ## Run Tests
 
