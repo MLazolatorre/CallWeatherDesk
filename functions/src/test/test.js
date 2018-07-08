@@ -3,7 +3,7 @@ import convertDateToApiFormat from '../utils';
 import WeatherQuestionInfo from '../WeatherQuestionInfo';
 import fakeRequest from './fakeRequest';
 import { weatherApiRequest, WetherApiSchema } from '../WeatherApi';
-import { wetherApiResponseType } from '../../flow-typed/callWeatherDesk';
+import { wetherApiResponseType } from '../flow-typed/callWeatherDesk';
 import weatherResponse from '../WeatherResponse';
 
 describe('CallWeatherDesk Test', () => {

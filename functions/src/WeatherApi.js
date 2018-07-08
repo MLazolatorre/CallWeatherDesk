@@ -1,6 +1,6 @@
 import Rp from 'request-promise';
 import apiKey from './WEATHER_API_KEY';
-import { wetherApiResponseType } from '../flow-typed/callWeatherDesk';
+import { wetherApiResponseType } from './flow-typed/callWeatherDesk';
 
 const host: string = 'http://api.worldweatheronline.com';
 const wwoApiKey: string = apiKey;

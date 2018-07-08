@@ -1,6 +1,8 @@
-functions/WEATHER_API_KEY.js
+
 .firebaserc
 functions/etc
 functions/flow-typed
 functions/lib
 functions/node_modules
+functions/coverage
+functions/.nyc_output

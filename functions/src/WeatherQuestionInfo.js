@@ -1,4 +1,4 @@
-import { requestFromDialogFlow } from '../flow-typed/callWeatherDesk';
+import { requestFromDialogFlow } from './flow-typed/callWeatherDesk';
 
 /**
  * Containe the informations send frome the user
