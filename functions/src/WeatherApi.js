@@ -1,46 +1,71 @@
 import Rp from 'request-promise';
 import apiKey from './WEATHER_API_KEY';
-import { responseType } from '../flow-typed/callWeatherDesk';
+import { wetherApiResponseType } from '../flow-typed/callWeatherDesk';
 
 const host: string = 'http://api.worldweatheronline.com';
 const wwoApiKey: string = apiKey;
 
 class WetherApiSchema {
-  constructor(struct: responseType) {
-    if (!struct) throw new Error('The structure is empty');
+  constructor(struct: wetherApiResponseType) {
+    if (!struct && !struct.data) throw new Error('The structure is empty');
+    if (!struct.data.request || !struct.data.current_condition || !struct.data.weather) throw new Error('Informations are missing in the structure');
 
-    [this.forecast] = struct.data.weather;
-    [this.location] = struct.data.request;
-    [this.conditions] = struct.data.current_condition;
-    this.currentConditions = this.conditions.weatherDesc[0].value;
+    this.struct = struct;
   }
-  // Create response
-  // const output: string =
 
-  strin(): string {
-    return `Current conditions in the ${this.location.type}
-    ${this.location.query} are ${this.currentConditions} with a projected high of
-    ${this.forecast.maxtempC}°C or ${this.forecast.maxtempF}°F and a low of
-    ${this.forecast.mintempC}°C or ${this.forecast.mintempF}°F on
-    ${this.forecast.date}.`;
+  get city(): string {
+    return this.struct.data.request.find(x => x.type === 'City').query;
+  }
+
+  get currentTemp(): { temp_C: string, temp_F: string } {
+    return {
+      temp_C: this.struct.data.current_condition[0].temp_C,
+      temp_F: this.struct.data.current_condition[0].temp_F,
+    };
+  }
+
+  get iconUrl(): string {
+    return this.struct.data.current_condition[0].weatherIconUrl[0].value;
+  }
+
+  get weatherDescDisplay(): string {
+    return this.struct.data.current_condition[0].lang_fr[0].value;
+  }
+
+  get date(): string {
+    return this.struct.data.weather[0].date;
+  }
+
+  get astronomy(): { sunrise: Date, sunset: Date } {
+    return {
+      sunset: new Date(this.struct.data.weather[0].astronomy.sunset),
+      sunrise: new Date(this.struct.data.weather[0].astronomy.sunrise),
+    };
+  }
+
+  get maxAndMinTemp(): { maxC: string, minC: string, maxF: string, minF: string } {
+    return {
+      maxC: this.struct.data.weather[0].maxtempC,
+      minC: this.struct.data.weather[0].mintempC,
+      maxF: this.struct.data.weather[0].maxtempF,
+      minF: this.struct.data.weather[0].mintempF,
+    };
   }
 }
 
-async function weatherApiRequest(city: string, date: string): WetherApiSchema {
+async function weatherApiRequest(city: string, date: string): wetherApiResponseType {
   // Create the path for the HTTP request to get the weather
-  const path: string = `/premium/v1/weather.ashx?key=${wwoApiKey}&q=${city}&format=json&num_of_days=5${date}`;
-  console.log(`API Request: ${host}${path} hahaha`);
+  const path: string = `/premium/v1/weather.ashx?key=${wwoApiKey}&q=${city}&format=json&num_of_days=5${date}&lang=fr`;
 
-  let reponseAPI: responseType;
+  let reponseAPI: string;
   try {
-    reponseAPI = new Rp(`${host}${path}`);
-  } catch (err: Error) {
-    console.log(err);
+    reponseAPI = await new Rp(`${host}${path}`);
+  } catch (err) {
+    console.log(`API request faile: ${err}`);
     throw err;
   }
 
-  console.log(reponseAPI);
-  return reponseAPI;
+  return JSON.parse(reponseAPI);
 }
 
 export { weatherApiRequest, WetherApiSchema };

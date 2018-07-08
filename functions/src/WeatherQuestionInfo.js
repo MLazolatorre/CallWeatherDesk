@@ -1,9 +1,12 @@
+import { requestFromDialogFlow } from '../flow-typed/callWeatherDesk';
+
 /**
  * Containe the informations send frome the user
  */
-export default class WeatherAnswerInfo {
-  constructor(struct: mixed) {
-    if (!struct) throw new Error('The structure is empty');
+export default class WeatherQuestionInfo {
+  constructor(struct: requestFromDialogFlow) {
+    if (!struct && !struct.data) throw new Error('The structure is empty');
+    if (!struct.queryResult.parameters || !struct.queryResult.intent) throw new Error('Informations are missing in the structure');
 
     this.struct = struct;
   }
@@ -31,6 +34,10 @@ export default class WeatherAnswerInfo {
    */
   get intent(): string {
     return this.struct.queryResult.intent.displayName;
+  }
+
+  get unit(): string {
+    return this.struct.queryResult.parameters.unit || 'C';
   }
 
   /**

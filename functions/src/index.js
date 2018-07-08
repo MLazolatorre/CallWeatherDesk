@@ -3,8 +3,9 @@
 import * as functions from 'firebase-functions';
 import { WebhookClient } from 'dialogflow-fulfillment';
 import convertDateToApiFormat from './utils';
-import WeatherAnswerInfo from './WeatherAnswerInfo';
+import WeatherQuestionInfo from './WeatherQuestionInfo';
 import { weatherApiRequest, WetherApiSchema } from './WeatherApi';
+import weatherResponse from './WeatherResponse';
 
 process.env.DEBUG = 'dialogflow:debug'; // enables lib debugging statements
 
@@ -13,32 +14,37 @@ exports.dialogflowFirebaseFulfillment = functions.https.onRequest(
     const webhookClient: WebhookClient = new WebhookClient({ request, response });
     const { body }: {} = request;
 
-    console.log('body');
-    console.log(body);
-
-    async function weatherResponse(agent: {}) {
+    async function reponseTheAnswer(agent: {}) {
       // stock user request's infos in an objetc
-      const weatherAnswer: WeatherAnswerInfo = new WeatherAnswerInfo(body);
+      const weatherQuestion: WeatherQuestionInfo = new WeatherQuestionInfo(body);
 
       // Check if the user asked a specific city.
-      if (!weatherAnswer.isAddressKnown()) {
+      if (!weatherQuestion.isAddressKnown()) {
         agent.add('Dans quelle ville voullez-vous que je recherche cette information ?');
         return;
       }
 
+      // get the wether inforation
       let reponseApi: WetherApiSchema;
       try {
         reponseApi = await weatherApiRequest(
-          weatherAnswer.address,
-          convertDateToApiFormat(weatherAnswer.date),
+          weatherQuestion.address,
+          convertDateToApiFormat(weatherQuestion.date),
         );
       } catch (err) {
-        agent.add(`${err}`);
+        console.log(`${err}`);
       }
-      agent.add(`${reponseApi}`);
+
+      // convert the Api response in an Object
+      const weatherInfo: WeatherQuestionInfo = new WeatherQuestionInfo(reponseApi);
+
+      // personalized the answer
+      const finalResponseString: string = weatherResponse(weatherInfo, weatherQuestion);
+
+      agent.add(finalResponseString);
     }
 
     // Intent's declaration functions
-    webhookClient.handleRequest(weatherResponse);
+    webhookClient.handleRequest(reponseTheAnswer);
   },
 );

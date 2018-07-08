@@ -26,8 +26,7 @@
     "deploy": "firebase deploy --only functions:dialogflowFirebaseFulfillment",
     "build": "babel src/ -d lib/",
     "flow": "flow",
-    "babel": "babel",
-    "test": "npm run build && cross-env NODE_ENV=test nyc mocha lib/test",
+    "test": "npm run build && cross-env NODE_ENV=test nyc mocha lib/test --timeout 15000",
     "clear": "rm -rf .nyc_output coverage etc lib node_modules"
   },
   "dependencies": {
