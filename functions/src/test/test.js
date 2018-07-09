@@ -1,3 +1,4 @@
+// @flow
 import assert from 'assert';
 import convertDateToApiFormat from '../utils';
 import WeatherQuestionInfo from '../WeatherQuestionInfo';
@@ -59,11 +60,11 @@ describe('CallWeatherDesk Test', () => {
 
       assert.throws(
         () => new WetherApiSchema(testStructur1),
-        /Informations are missing in the structure/,
+        'Informations are missing in the structure',
       );
       assert.throws(
         () => new WetherApiSchema(testStructur2),
-        /Informations are missing in the structure/,
+        'Informations are missing in the structure',
       );
     });
   });
@@ -71,7 +72,7 @@ describe('CallWeatherDesk Test', () => {
   describe('WeatherApi', () => {
     describe('Create WetherApiSchema errors', () => {
       it('Should throw an error "The structure is empty"', () => {
-        assert.throws(() => new WetherApiSchema({}), /The structure is empty/);
+        assert.throws(() => new WetherApiSchema({}), 'The structure is empty');
       });
 
       it('Should throw an error "Informations are missing in the structure"', () => {
@@ -91,11 +92,11 @@ describe('CallWeatherDesk Test', () => {
 
         assert.throws(
           () => new WetherApiSchema(testStructur1),
-          /Informations are missing in the structure/,
+          'Informations are missing in the structure',
         );
         assert.throws(
           () => new WetherApiSchema(testStructur2),
-          /Informations are missing in the structure/,
+          'Informations are missing in the structure',
         );
       });
     });
