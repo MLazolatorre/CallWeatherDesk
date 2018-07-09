@@ -6,9 +6,9 @@ import { WebhookClient } from 'dialogflow-fulfillment';
 import type { agentType } from 'dialogflow-fulfillment';
 import convertDateToApiFormat from './utils';
 import WeatherQuestionInfo from './WeatherQuestionInfo';
-import { weatherApiRequest, WetherApiSchema } from './WeatherApi';
+import { weatherApiRequest, WeatherApiSchema } from './WeatherApi';
 import weatherResponse from './WeatherResponse';
-import type { wetherApiResponseType, requestFromDialogFlow } from './flow-typed/callWeatherDesk';
+import type { weatherApiResponseType, requestFromDialogFlow } from './flow-typed/callWeatherDesk';
 
 type requestType = {
   body: requestFromDialogFlow,
@@ -37,13 +37,13 @@ exports.dialogflowFirebaseFulfillment = functions.https.onRequest(
         agent.add('Dans quelle ville voullez-vous que je recherche cette information ?');
       } else {
         try {
-          // get the wether inforation
-          const reponseApi: wetherApiResponseType = await weatherApiRequest(
+          // get the weather inforation
+          const reponseApi: weatherApiResponseType = await weatherApiRequest(
             weatherQuestion.address,
             convertDateToApiFormat(weatherQuestion.date),
           );
           // convert the Api response in an Object
-          const weatherInfo: WetherApiSchema = new WetherApiSchema(reponseApi);
+          const weatherInfo: WeatherApiSchema = new WeatherApiSchema(reponseApi);
 
           // personalized the answer
           const finalResponseString: string = weatherResponse(weatherInfo, weatherQuestion);

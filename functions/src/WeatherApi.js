@@ -1,15 +1,15 @@
 // @flow
 import Rp from 'request-promise';
 import apiKey from './WEATHER_API_KEY';
-import type { wetherApiResponseType } from './flow-typed/callWeatherDesk';
+import type { weatherApiResponseType } from './flow-typed/callWeatherDesk';
 
 const host: string = 'http://api.worldweatheronline.com';
 const wwoApiKey: string = apiKey;
 
-class WetherApiSchema {
-  struct: wetherApiResponseType;
+class WeatherApiSchema {
+  struct: weatherApiResponseType;
 
-  constructor(struct: wetherApiResponseType) {
+  constructor(struct: weatherApiResponseType) {
     if (!struct && !struct.data) throw new Error('The structure is empty');
     if (!struct.data.request || !struct.data.current_condition || !struct.data.weather) throw new Error('Informations are missing in the structure');
 
@@ -56,7 +56,7 @@ class WetherApiSchema {
   }
 }
 
-async function weatherApiRequest(city: string, date: string): Promise<wetherApiResponseType> {
+async function weatherApiRequest(city: string, date: string): Promise<weatherApiResponseType> {
   // Create the path for the HTTP request to get the weather
   const path: string = `/premium/v1/weather.ashx?key=${wwoApiKey}&q=${city}&format=json&num_of_days=5${date}&lang=fr`;
 
@@ -64,11 +64,11 @@ async function weatherApiRequest(city: string, date: string): Promise<wetherApiR
   try {
     reponseAPI = await new Rp(`${host}${path}`);
   } catch (err) {
-    console.log(`API request faile: ${err}`);
+    console.log(`API request fails: ${err}`);
     throw err;
   }
 
   return JSON.parse(reponseAPI);
 }
 
-export { weatherApiRequest, WetherApiSchema };
+export { weatherApiRequest, WeatherApiSchema };

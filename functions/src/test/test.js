@@ -3,8 +3,8 @@ import assert from 'assert';
 import convertDateToApiFormat from '../utils';
 import WeatherQuestionInfo from '../WeatherQuestionInfo';
 import fakeRequest from './fakeRequest';
-import { weatherApiRequest, WetherApiSchema } from '../WeatherApi';
-import { wetherApiResponseType } from '../flow-typed/callWeatherDesk';
+import { weatherApiRequest, WeatherApiSchema } from '../WeatherApi';
+import { weatherApiResponseType } from '../flow-typed/callWeatherDesk';
 import weatherResponse from '../WeatherResponse';
 
 describe('CallWeatherDesk Test', () => {
@@ -46,33 +46,33 @@ describe('CallWeatherDesk Test', () => {
     });
 
     it('Should throw an error "Informations are missing in the structure"', () => {
-      const testStructur1: wetherApiResponseType = {
+      const testStructur1: weatherApiResponseType = {
         queryResult: {
           parameters: '',
         },
       };
 
-      const testStructur2: wetherApiResponseType = {
+      const testStructur2: weatherApiResponseType = {
         queryResult: {
           intent: '',
         },
       };
 
       assert.throws(
-        () => new WetherApiSchema(testStructur1),
+        () => new WeatherApiSchema(testStructur1),
         'Informations are missing in the structure',
       );
       assert.throws(
-        () => new WetherApiSchema(testStructur2),
+        () => new WeatherApiSchema(testStructur2),
         'Informations are missing in the structure',
       );
     });
   });
 
   describe('WeatherApi', () => {
-    describe('Create WetherApiSchema errors', () => {
+    describe('Create WeatherApiSchema errors', () => {
       it('Should throw an error "The structure is empty"', () => {
-        assert.throws(() => new WetherApiSchema({}), 'The structure is empty');
+        assert.throws(() => new WeatherApiSchema({}), 'The structure is empty');
       });
 
       it('Should throw an error "Informations are missing in the structure"', () => {
@@ -91,30 +91,30 @@ describe('CallWeatherDesk Test', () => {
         };
 
         assert.throws(
-          () => new WetherApiSchema(testStructur1),
+          () => new WeatherApiSchema(testStructur1),
           'Informations are missing in the structure',
         );
         assert.throws(
-          () => new WetherApiSchema(testStructur2),
+          () => new WeatherApiSchema(testStructur2),
           'Informations are missing in the structure',
         );
       });
     });
 
     describe('Call to the weather API', () => {
-      let apiResponse: wetherApiResponseType;
+      let apiResponse: weatherApiResponseType;
       const date = convertDateToApiFormat(new Date());
 
       it('Should send a request to the weather API', async () => {
         try {
           apiResponse = await weatherApiRequest('Paris', date);
         } catch (err) {
-          assert.fail(`API request faile: ${err}`);
+          assert.fail(`API request fails: ${err}`);
         }
       });
 
-      it('Should transform an API request in an wetherApiSchema object', () => {
-        const weatherInfo: WetherApiSchema = new WetherApiSchema(apiResponse);
+      it('Should transform an API request in an weatherApiSchema object', () => {
+        const weatherInfo: WeatherApiSchema = new WeatherApiSchema(apiResponse);
         assert.equal(weatherInfo.city, 'Paris, France');
 
         // test is there is a value in currentMaxTemp
@@ -150,18 +150,18 @@ describe('CallWeatherDesk Test', () => {
     describe('should return the apropriet response', () => {
       const date = new Date();
       const city = 'Madrid';
-      // Get weatherInfo to build a WetherApiSchema object
+      // Get weatherInfo to build a WeatherApiSchema object
       let weatherInfo;
-      let apiResponse: wetherApiResponseType;
+      let apiResponse: weatherApiResponseType;
 
       // load the info frome the weather API
       before(async () => {
         try {
           apiResponse = await weatherApiRequest(city, convertDateToApiFormat(date));
         } catch (err) {
-          assert.fail(`API request faile: ${err}`);
+          assert.fail(`API request fails: ${err}`);
         }
-        weatherInfo = new WetherApiSchema(apiResponse);
+        weatherInfo = new WeatherApiSchema(apiResponse);
       });
 
       it('Should tell the temperature in °F in Mardid', () => {

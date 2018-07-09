@@ -15,7 +15,7 @@ export type requestFromDialogFlow = {
   },
 };
 
-export type wetherApiResponseType = {
+export type weatherApiResponseType = {
   data: {
     request: Array<{
       type: string,
