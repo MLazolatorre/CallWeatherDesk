@@ -1,3 +1,4 @@
+// @flow
 import type { requestFromDialogFlow } from '../../flow-typed/callWeatherDesk';
 
 export default function fakeRequest(

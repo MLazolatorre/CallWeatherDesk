@@ -1,3 +1,4 @@
+// @flow
 export type requestFromDialogFlow = {
   responseId: string,
   queryResult: {
@@ -5,7 +6,7 @@ export type requestFromDialogFlow = {
     parameters: {
       address: string,
       'date-time': string,
-      unit: string,
+      unit: 'C' | 'F',
     },
     intent: {
       name: string,
@@ -23,7 +24,7 @@ export type wetherApiResponseType = {
     current_condition: Array<{
       temp_C: string,
       temp_F: string,
-      weatherIconURL: Array<{ value: string }>,
+      weatherIconUrl: Array<{ value: string }>,
       weatherDesc: Array<{ value: string }>,
       lang_fr: Array<{ value: string }>,
     }>,

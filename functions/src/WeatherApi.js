@@ -1,11 +1,14 @@
+// @flow
 import Rp from 'request-promise';
 import apiKey from './WEATHER_API_KEY';
-import { wetherApiResponseType } from './flow-typed/callWeatherDesk';
+import type { wetherApiResponseType } from './flow-typed/callWeatherDesk';
 
 const host: string = 'http://api.worldweatheronline.com';
 const wwoApiKey: string = apiKey;
 
 class WetherApiSchema {
+  struct: wetherApiResponseType;
+
   constructor(struct: wetherApiResponseType) {
     if (!struct && !struct.data) throw new Error('The structure is empty');
     if (!struct.data.request || !struct.data.current_condition || !struct.data.weather) throw new Error('Informations are missing in the structure');
@@ -14,7 +17,7 @@ class WetherApiSchema {
   }
 
   get city(): string {
-    return this.struct.data.request.find(x => x.type === 'City').query;
+    return this.struct.data.request[0].query;
   }
 
   get currentTemp(): { temp_C: string, temp_F: string } {
@@ -38,8 +41,8 @@ class WetherApiSchema {
 
   get astronomy(): { sunrise: Date, sunset: Date } {
     return {
-      sunset: new Date(this.struct.data.weather[0].astronomy.sunset),
-      sunrise: new Date(this.struct.data.weather[0].astronomy.sunrise),
+      sunset: new Date(this.struct.data.weather[0].astronomy[0].sunset),
+      sunrise: new Date(this.struct.data.weather[0].astronomy[0].sunrise),
     };
   }
 

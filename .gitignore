@@ -1,7 +1,6 @@
 
 .firebaserc
 functions/etc
-functions/flow-typed
 functions/lib
 functions/node_modules
 functions/coverage

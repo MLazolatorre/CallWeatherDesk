@@ -45,13 +45,13 @@ describe('CallWeatherDesk Test', () => {
     });
 
     it('Should throw an error "Informations are missing in the structure"', () => {
-      const testStructur1 = {
+      const testStructur1: wetherApiResponseType = {
         queryResult: {
           parameters: '',
         },
       };
 
-      const testStructur2 = {
+      const testStructur2: wetherApiResponseType = {
         queryResult: {
           intent: '',
         },
@@ -59,11 +59,11 @@ describe('CallWeatherDesk Test', () => {
 
       assert.throws(
         () => new WetherApiSchema(testStructur1),
-        'Informations are missing in the structure',
+        /Informations are missing in the structure/,
       );
       assert.throws(
         () => new WetherApiSchema(testStructur2),
-        'Informations are missing in the structure',
+        /Informations are missing in the structure/,
       );
     });
   });
@@ -71,32 +71,31 @@ describe('CallWeatherDesk Test', () => {
   describe('WeatherApi', () => {
     describe('Create WetherApiSchema errors', () => {
       it('Should throw an error "The structure is empty"', () => {
-        assert.throws(() => new WetherApiSchema(), 'The structure is empty');
-        assert.throws(() => new WetherApiSchema({}), 'The structure is empty');
+        assert.throws(() => new WetherApiSchema({}), /The structure is empty/);
       });
 
       it('Should throw an error "Informations are missing in the structure"', () => {
         const testStructur1 = {
           data: {
-            request: '',
-            current_condition: '',
+            request: [],
+            current_condition: [],
           },
         };
 
         const testStructur2 = {
           data: {
-            weather: '',
-            current_condition: '',
+            weather: [],
+            current_condition: [],
           },
         };
 
         assert.throws(
           () => new WetherApiSchema(testStructur1),
-          'Informations are missing in the structure',
+          /Informations are missing in the structure/,
         );
         assert.throws(
           () => new WetherApiSchema(testStructur2),
-          'Informations are missing in the structure',
+          /Informations are missing in the structure/,
         );
       });
     });

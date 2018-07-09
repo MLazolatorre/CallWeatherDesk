@@ -1,3 +1,4 @@
-const apiKey: string = "";
+// @flow
+const apiKey: string = '';
 
 export default apiKey;

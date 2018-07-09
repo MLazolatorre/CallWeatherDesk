@@ -1,3 +1,4 @@
+// @flow
 import WeatherQuestionInfo from './WeatherQuestionInfo';
 import { WetherApiSchema } from './WeatherApi';
 
@@ -5,13 +6,13 @@ export default function weatherResponse(
   weatherInfo: WetherApiSchema,
   weatherQuestion: WeatherQuestionInfo,
 ): string {
-  const { intent, address, unit } = weatherQuestion;
-  const { currentTemp, weatherDescDisplay, maxAndMinTemp } = weatherInfo;
+  const { intent, address, unit }: WeatherQuestionInfo = weatherQuestion;
+  const { currentTemp, weatherDescDisplay, maxAndMinTemp }: WetherApiSchema = weatherInfo;
 
   // get in simple variables the info to display
-  const currentTempDisplay = currentTemp[`temp_${unit}`];
-  const maxTempDisplay = maxAndMinTemp[`max${unit}`];
-  const minTempDisplay = maxAndMinTemp[`min${unit}`];
+  const currentTempDisplay: string = currentTemp[`temp_${unit}`];
+  const maxTempDisplay: string = maxAndMinTemp[`max${unit}`];
+  const minTempDisplay: string = maxAndMinTemp[`min${unit}`];
   let reponse: string;
 
   switch (intent) {

@@ -1,11 +1,14 @@
-import { requestFromDialogFlow } from './flow-typed/callWeatherDesk';
+// @flow
+import type { requestFromDialogFlow } from './flow-typed/callWeatherDesk';
 
 /**
  * Containe the informations send frome the user
  */
 export default class WeatherQuestionInfo {
+  struct: requestFromDialogFlow;
+
   constructor(struct: requestFromDialogFlow) {
-    if (!struct && !struct.data) throw new Error('The structure is empty');
+    if (!struct) throw new Error('The structure is empty');
     if (!struct.queryResult.parameters || !struct.queryResult.intent) throw new Error('Informations are missing in the structure');
 
     this.struct = struct;
@@ -24,7 +27,7 @@ export default class WeatherQuestionInfo {
    */
   get date(): string {
     // if the user didn't precised the date, use the current date
-    if (this.struct.queryResult.parameters['date-time'] === '') return new Date();
+    if (this.struct.queryResult.parameters['date-time'] === '') return new Date().toISOString();
 
     return this.struct.queryResult.parameters['date-time'];
   }
