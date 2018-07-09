@@ -23,7 +23,7 @@ export default function weatherResponse(
       reponse = `Il fait actuellement ${currentTempDisplay}°${unit} à ${address}`;
       break;
     default:
-      reponse = "Je n'ai pas compris. Quelle info météo voulez-vous ?";
+      reponse = 'Je n\'ai pas compris. Quelle info météo voulez-vous ?';
   }
 
   return reponse;

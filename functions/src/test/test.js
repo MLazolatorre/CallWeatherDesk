@@ -190,7 +190,7 @@ describe('CallWeatherDesk Test', () => {
         }
       });
 
-      it("Should tell it didn't understand the asked info", () => {
+      it('Should tell it did not understand the asked info', () => {
         // create a fake requests to build WeatherQuestionInfo Objects
         const requestDefault = fakeRequest(city, date, '', 'C');
 
@@ -201,7 +201,7 @@ describe('CallWeatherDesk Test', () => {
         const DefaultResponseString = weatherResponse(weatherInfo, defaultQuestion);
 
         // test the string response
-        assert.equal(DefaultResponseString, "Je n'ai pas compris. Quelle info météo voulez-vous ?");
+        assert.equal(DefaultResponseString, 'Je n ai pas compris. Quelle info météo voulez-vous ?');
       });
 
       it('Should tell the weather in °C in Mardid', () => {
