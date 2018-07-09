@@ -56,7 +56,7 @@ class WetherApiSchema {
   }
 }
 
-async function weatherApiRequest(city: string, date: string): wetherApiResponseType {
+async function weatherApiRequest(city: string, date: string): Promise<wetherApiResponseType> {
   // Create the path for the HTTP request to get the weather
   const path: string = `/premium/v1/weather.ashx?key=${wwoApiKey}&q=${city}&format=json&num_of_days=5${date}&lang=fr`;
 
