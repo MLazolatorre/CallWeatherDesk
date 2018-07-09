@@ -27,7 +27,7 @@
     "build": "babel src/ -d lib/",
     "flow": "flow",
     "test": "npm run build && cross-env NODE_ENV=test nyc mocha lib/test --timeout 15000",
-    "clear": "rm -rf .nyc_output coverage etc lib node_modules"
+    "clear": "rm -rf .nyc_output coverage etc lib node_modules flow-type"
   },
   "dependencies": {
     "actions-on-google": "2.0.0-alpha.4",
