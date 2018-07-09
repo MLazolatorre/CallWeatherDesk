@@ -201,7 +201,7 @@ describe('CallWeatherDesk Test', () => {
         const DefaultResponseString = weatherResponse(weatherInfo, defaultQuestion);
 
         // test the string response
-        assert.equal(DefaultResponseString, 'Je n ai pas compris. Quelle info météo voulez-vous ?');
+        assert.equal(DefaultResponseString, 'Je n\'ai pas compris. Quelle info météo voulez-vous ?');
       });
 
       it('Should tell the weather in °C in Mardid', () => {
@@ -229,7 +229,7 @@ describe('CallWeatherDesk Test', () => {
           );
         }
 
-        includeString = '°C et les températures maximals seront : ';
+        includeString = '°C et les températures maximales et minimales seront : ';
         if (!weatherCResponseString.includes(includeString)) {
           assert.fail(
             `The answer does not fit with the expected weather answer. It should containe "${includeString}" but it is: "${weatherCResponseString}"`,
