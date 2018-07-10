@@ -4,7 +4,6 @@ import apiKey from './WEATHER_API_KEY';
 import type { weatherApiResponseType } from './flow-typed/callWeatherDesk';
 
 const host: string = 'http://api.worldweatheronline.com';
-const wwoApiKey: string = apiKey;
 
 class WeatherApiSchema {
   struct: weatherApiResponseType;
@@ -58,7 +57,7 @@ class WeatherApiSchema {
 
 async function weatherApiRequest(city: string, date: string): Promise<weatherApiResponseType> {
   // Create the path for the HTTP request to get the weather
-  const path: string = `/premium/v1/weather.ashx?key=${wwoApiKey}&q=${city}&format=json&num_of_days=5${date}&lang=fr`;
+  const path: string = `/premium/v1/weather.ashx?key=${apiKey}&q=${city}&format=json&num_of_days=5&date=${date}&lang=fr`;
 
   let reponseAPI: string;
   try {

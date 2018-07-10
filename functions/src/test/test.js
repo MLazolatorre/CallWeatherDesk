@@ -1,11 +1,14 @@
 // @flow
 import assert from 'assert';
+import nock from 'nock';
 import convertDateToApiFormat from '../utils';
 import WeatherQuestionInfo from '../WeatherQuestionInfo';
 import fakeRequest from './fakeRequest';
 import { weatherApiRequest, WeatherApiSchema } from '../WeatherApi';
 import { weatherApiResponseType } from '../flow-typed/callWeatherDesk';
 import weatherResponse from '../WeatherResponse';
+import apiKey from '../WEATHER_API_KEY';
+import fakeResponseFromApi from './fakeResponseFromApi';
 
 describe('CallWeatherDesk Test', () => {
   describe('convertDateToApiFormat', () => {
@@ -143,21 +146,51 @@ describe('CallWeatherDesk Test', () => {
     });
   });
 
-  console.log('Juste avant WeatherResponse');
-
   describe('WeatherResponse', () => {
-    console.log('Juste Apres WeatherResponse');
     describe('should return the apropriet response', () => {
       const date = new Date();
       const city = 'Madrid';
+      const currentTemp: { temp_C: string, temp_F: string } = {
+        temp_C: '34',
+        temp_F: '83',
+      };
+      const maxMinTemp: {
+        maxtempC: string,
+        mintempC: string,
+        maxtempF: string,
+        mintempF: string,
+      } = {
+        maxtempC: '35',
+        mintempC: '24',
+        maxtempF: '95',
+        mintempF: '75',
+      };
+
       // Get weatherInfo to build a WeatherApiSchema object
       let weatherInfo;
       let apiResponse: weatherApiResponseType;
 
       // load the info frome the weather API
       before(async () => {
+        const path: string = '/premium/v1/weather.ashx';
+
+        nock('http://api.worldweatheronline.com')
+          .get(path)
+          .query({
+            key: apiKey,
+            q: city,
+            date: convertDateToApiFormat(date),
+            lang: 'fr',
+            format: 'json',
+            num_of_days: 5,
+          })
+          .reply(200, fakeResponseFromApi(city, currentTemp, date, maxMinTemp));
+
         try {
           apiResponse = await weatherApiRequest(city, convertDateToApiFormat(date));
+
+          console.log('apiResponse');
+          console.log(apiResponse);
         } catch (err) {
           assert.fail(`API request fails: ${err}`);
         }
@@ -175,19 +208,9 @@ describe('CallWeatherDesk Test', () => {
         const tempFResponseString = weatherResponse(weatherInfo, tempQuestionF);
 
         // test the string response
-        let includeString = 'Il fait actuellement';
-        if (!tempFResponseString.includes(includeString)) {
-          assert.fail(
-            `The answer does not fit with the expected temperature answer. It should containe "${includeString}" but it is: "${tempFResponseString}"`,
-          );
-        }
+        const responseSouldBe = `Il fait actuellement ${currentTemp.temp_F}°F, à ${city}`;
 
-        includeString = `°F, à ${city}`;
-        if (!tempFResponseString.includes(includeString)) {
-          assert.fail(
-            `The answer does not fit with the expected temperature answer. It should containe "${includeString}" but it is: "${tempFResponseString}" `,
-          );
-        }
+        assert.equal(tempFResponseString, responseSouldBe);
       });
 
       it('Should tell it did not understand the asked info', () => {
@@ -201,7 +224,9 @@ describe('CallWeatherDesk Test', () => {
         const DefaultResponseString = weatherResponse(weatherInfo, defaultQuestion);
 
         // test the string response
-        assert.equal(DefaultResponseString, "Je n'ai pas compris. Quelle info météo voulez-vous ?");
+        const responseSouldBe = "Je n'ai pas compris. Quelle info météo voulez-vous ?";
+
+        assert.equal(DefaultResponseString, responseSouldBe);
       });
 
       it('Should tell the weather in °C in Mardid', () => {
@@ -215,26 +240,13 @@ describe('CallWeatherDesk Test', () => {
         const weatherCResponseString = weatherResponse(weatherInfo, weatherQuestionC);
 
         // test the string response
-        let includeString = `Le temps à ${city} est`;
-        if (!weatherCResponseString.includes(includeString)) {
-          assert.fail(
-            `The answer does not fit with the expected weather answer. It should containe "${includeString}" but it is: "${weatherCResponseString}"`,
-          );
-        }
+        const responseSouldBe = `Le temps à ${city} est ensoleillé, il y fait actuellement ${
+          currentTemp.temp_C
+        }°C et les températures maximales et minimales sont : ${maxMinTemp.mintempC} et ${
+          maxMinTemp.maxtempC
+        }°C`;
 
-        includeString = ', il y fait actuellement ';
-        if (!weatherCResponseString.includes(includeString)) {
-          assert.fail(
-            `The answer does not fit with the expected weather answer. It should containe "${includeString}" but it is: "${weatherCResponseString}"`,
-          );
-        }
-
-        includeString = 'et les températures maximales et minimales sont : ';
-        if (!weatherCResponseString.includes(includeString)) {
-          assert.fail(
-            `The answer does not fit with the expected weather answer. It should containe "${includeString}" but it is: "${weatherCResponseString}"`,
-          );
-        }
+        assert.equal(weatherCResponseString, responseSouldBe);
       });
     });
   });
